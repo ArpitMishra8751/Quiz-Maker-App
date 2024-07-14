@@ -14,9 +14,29 @@ const Quiz = () => {
       setAns(e.target.innerText);
     }
     const [score,setScore] = useState(0);
-    const [ansflag,setAnsflag] = useState(false);
-    const [ID,setId] = useState();
-    function checkAns(correctAns,id){
+    // const [ansflag,setAnsflag] = useState(false);
+    // const [ID,setId] = useState();
+    // function checkAns(correctAns,id){
+    //   if(ans===""){
+    //     toast.error("No option has been selected");
+    //     return;
+    //   }
+    //   const ans1 = correctAns?.replaceAll(" ","").toLowerCase();
+    //   console.log("selected Answer is:- ",ans1);
+    //   const ans2 = ans?.replaceAll(" ","").toLowerCase();
+    //   console.log("Correct Ans is :- ",ans2);
+    //   if(ans2===ans1){
+    //     setScore(score+4);
+    //   }
+    //   else{
+    //     setScore(score-1);
+    //   }
+    //   setId(id);
+    //   setAnsflag(true);
+    //   setAns("");
+    // }
+    const [scorearr,setScorearr] = useState([]);
+    async function checkAns(correctAns,idd){
       if(ans===""){
         toast.error("No option has been selected");
         return;
@@ -24,18 +44,23 @@ const Quiz = () => {
       const ans1 = correctAns?.replaceAll(" ","").toLowerCase();
       console.log("selected Answer is:- ",ans1);
       const ans2 = ans?.replaceAll(" ","").toLowerCase();
-      console.log("Correct Ans is :- ",ans2);
       if(ans2===ans1){
-        setScore(score+4);
+        setScorearr([...scorearr,{id:idd,mark:4}]);
       }
       else{
-        setScore(score-1);
+        setScorearr([...scorearr,{id:idd,mark:-1}]);
       }
-      setId(id);
-      setAnsflag(true);
       setAns("");
     }
     const [flag,setFlag] = useState(true);
+     function submitHandler(){
+      let marks=0;
+       scorearr.map((data)=>(marks=marks+data.mark));
+      setScore(marks);
+      setFlag(!flag);
+      setScorearr([]);
+      // setScore(0);
+    }
     // const [flagg,setFlagg] = useState(false);
     // function clickHandler(){
     //   setFlagg(true);
@@ -70,7 +95,8 @@ const Quiz = () => {
               <span>d.{ ")"}</span><span onClick = { eventHandler } className='text-blue-600 visited:text-purple-600 hover:text-red-500 ' >  {val.data.option4}</span>
             </div>
           {
-            ansflag && (val.id===ID) ? 
+            // ansflag && (val.id===ID) ?
+            scorearr.some((p) => p.id === val.id) ?
             ( <button className=' border-2 rounded-md hover:text-purple-600 '  >  Answer Saved </button>) :
             ( <button onClick={()=>checkAns(val.data.ans,val.id)} className=' border-2 rounded-md hover:text-purple-600 ' > Save Ans </button>)
           }
@@ -79,7 +105,7 @@ const Quiz = () => {
         )
         )}
       </div>
-      <button onClick={()=> setFlag(!flag) } >Submit</button>
+     <button onClick={submitHandler} >Submit</button>
       </div>
 ) : ( 
   <div>
